@@ -25,9 +25,7 @@ def import_from_ftp(
         new_filepaths = [f"ftp://{ftp_host}{file}" for file in new_files]
 
         # Fetch dataframes in parallel
-        processes_count = max(
-            min(math.ceil(multiprocessing.cpu_count() / 2), len(new_filepaths)), 1
-        )
+        processes_count = max(min(multiprocessing.cpu_count(), len(new_filepaths)), 1)
         with multiprocessing.Pool(processes=processes_count) as pool:
             waiting = [
                 (
@@ -52,6 +50,7 @@ def import_from_ftp(
                         db.import_dataframe(target_table, df, db_con)
                         db.mark_file_as_imported(filepath, target_table, db_con)
 
+                        del df
                         del process
                         gc.collect()
                     else:

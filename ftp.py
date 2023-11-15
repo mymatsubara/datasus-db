@@ -1,12 +1,11 @@
 import pandas as pd
 import urllib.request as request
-from dbfread import DBF
-from dbf import Table
 import ftplib
 import subprocess
 import shutil
 import os.path as path
 import os
+from simpledbf import Dbf5
 
 
 def fetch_dataframe(ftp_path: str) -> pd.DataFrame:
@@ -27,8 +26,7 @@ def fetch_dataframe(ftp_path: str) -> pd.DataFrame:
 
     dbc_2_dbf(dbc_file, dbf_file)
 
-    dbf = DBF(dbf_file)
-    df = pd.DataFrame(iter(dbf))
+    df = Dbf5(dbf_file, codec="iso-8859-1").to_dataframe().infer_objects()
 
     rm(dbc_file)
     rm(dbf_file)
