@@ -6,9 +6,11 @@ import shutil
 import os.path as path
 import os
 from simpledbf import Dbf5
+from dbfread import DBF
+import polars as pl
 
 
-def fetch_dataframe(ftp_path: str) -> pd.DataFrame:
+def fetch_dataframe(ftp_path: str) -> pl.DataFrame:
     print("ftp_path: ", ftp_path, flush=True)
     response = request.urlopen(ftp_path)
     dbc_raw = response.read()
@@ -26,7 +28,7 @@ def fetch_dataframe(ftp_path: str) -> pd.DataFrame:
 
     dbc_2_dbf(dbc_file, dbf_file)
 
-    df = Dbf5(dbf_file, codec="iso-8859-1").to_dataframe().infer_objects()
+    df = pl.DataFrame(iter(DBF(dbf_file, encoding="iso-8859-1")))
 
     rm(dbc_file)
     rm(dbf_file)

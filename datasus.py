@@ -7,8 +7,10 @@ import duckdb
 import db
 import multiprocessing
 import gc
+import polars as pl
+import time
 
-MapFn = Callable[[pd.DataFrame, str], pd.DataFrame]
+MapFn = Callable[[pl.DataFrame, str], pl.DataFrame]
 
 
 def import_from_ftp(
@@ -57,49 +59,20 @@ def import_from_ftp(
                         still_wating.append((filepath, process))
 
                 waiting = still_wating
-
-            # processes = pool.map_async(
-            #     lambda filepath: (ftp.fetch_dataframe(filepath), filepath),
-            #     new_filepaths,
-            #     callback=lambda result: import_to_db(
-            #         df=result[0],
-            #         target_table=target_table,
-            #         filepath=result[1],
-            #         map_fn=map_fn,
-            #         db_con=db_con,
-            #     ),
-            # )
+                time.sleep(0.5)
 
             print("Processes finished")
 
-        # while len(waiting) != 0:
-        #     still_wating = []
-
-        #     for filepath, process in waiting:
-        #         if process.ready():
-        #             print("#####filepath: ", filepath)
-        #             print(f"Importing data to db: {path.basename(filepath)}")
-        #             # Import fetched data
-        #             df = map_fn(process.get())
-        #             db.import_dataframe(target_table, df)
-        #             db.mark_file_as_imported(filepath, target_table, db_con)
-        #         else:
-        #             still_wating.append((filepath, process))
-
-        #     waiting = still_wating
-        # time.sleep(1)
-
 
 def import_to_db(
-    df: pd.DataFrame,
+    df: pl.DataFrame,
     target_table: str,
     filepath: str,
     map_fn: MapFn,
     db_con: duckdb.DuckDBPyConnection,
 ):
-    print("hello")
-    print(df, target_table, filepath, map_fn, db_con)
     print(f"Importing data to db: {path.basename(filepath)}")
+
     # Import fetched data
     db.import_dataframe(target_table, map_fn(df))
     db.mark_file_as_imported(filepath, target_table, db_con)

@@ -1,6 +1,7 @@
 import duckdb
 import pandas as pd
 import os.path as path
+import polars as pl
 
 IMPORT_TABLE = "__import"
 
@@ -28,7 +29,7 @@ def check_new_files(
 
 
 def import_dataframe(
-    table_name: str, df: pd.DataFrame, db_con: duckdb.DuckDBPyConnection
+    table_name: str, df: pl.DataFrame, db_con: duckdb.DuckDBPyConnection
 ):
     # Since this is function is running on a controlled environment we don't sanitize the table name
     if has_table(table_name, db_con):
