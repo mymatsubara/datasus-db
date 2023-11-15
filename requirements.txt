@@ -1,0 +1,6 @@
+pandas
+SQLAlchemy
+dbfread
+pyarrow
+duckdb
+fsspec
