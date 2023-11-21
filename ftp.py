@@ -11,7 +11,6 @@ import polars as pl
 
 
 def fetch_dataframe(ftp_path: str) -> pl.DataFrame:
-    print("ftp_path: ", ftp_path, flush=True)
     response = request.urlopen(ftp_path)
     dbc_raw = response.read()
 

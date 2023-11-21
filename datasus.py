@@ -1,5 +1,5 @@
-import math
 from typing import Callable
+import sys
 import pandas as pd
 import ftp
 import os.path as path
@@ -9,8 +9,9 @@ import multiprocessing
 import gc
 import polars as pl
 import time
+import random
 
-MapFn = Callable[[pl.DataFrame, str], pl.DataFrame]
+MapFn = Callable[[pl.DataFrame], pl.DataFrame]
 
 
 def import_from_ftp(
@@ -20,11 +21,16 @@ def import_from_ftp(
     db_string="datasus.db",
     ftp_host="ftp.datasus.gov.br",
 ):
+    print(f"⏳ [{target_table}] Starting data import...")
+
     with duckdb.connect(db_string) as db_con:
         files = ftp.get_matching_files(ftp_host, ftp_pattern)
         db.create_import_table(db_con)
         new_files = db.check_new_files(files, target_table, db_con)
         new_filepaths = [f"ftp://{ftp_host}{file}" for file in new_files]
+
+        # Shuffle list to make it harder to process multiple huge files in parallel, which can exaust the systems resources
+        random.shuffle(new_filepaths)
 
         # Fetch dataframes in parallel
         processes_count = max(min(multiprocessing.cpu_count(), len(new_filepaths)), 1)
@@ -33,8 +39,8 @@ def import_from_ftp(
                 (
                     filepath,
                     pool.apply_async(
-                        ftp.fetch_dataframe,
-                        args=(filepath,),
+                        fetch_and_map,
+                        args=(filepath, map_fn, target_table),
                     ),
                 )
                 for filepath in new_filepaths
@@ -45,34 +51,44 @@ def import_from_ftp(
 
                 for filepath, process in waiting:
                     if process.ready():
-                        print("#####filepath: ", filepath)
-                        print(f"Importing data to db: {path.basename(filepath)}")
-                        # Import fetched data
-                        df = map_fn(process.get(), filepath)
-                        db.import_dataframe(target_table, df, db_con)
-                        db.mark_file_as_imported(filepath, target_table, db_con)
+                        try:
+                            # Import fetched data
+                            filename = path.basename(filepath)
+                            (df, row_count) = process.get()
 
-                        del df
-                        del process
-                        gc.collect()
+                            msg = f"💾 [{target_table}] Saving data from file to db: '{filename}'"
+                            print(msg)
+
+                            if row_count != 0:
+                                db.import_dataframe(target_table, df, db_con)
+                            else:
+                                print(f"⚠️ [{target_table}] '{filename}' has no data")
+
+                            db.mark_file_as_imported(filepath, target_table, db_con)
+
+                            del df
+                            del process
+                            gc.collect()
+
+                        except Exception as e:
+                            print(
+                                f"❌ [{target_table}] Error while importing '{filepath}'",
+                                file=sys.stderr,
+                            )
+                            raise e
+
                     else:
                         still_wating.append((filepath, process))
 
                 waiting = still_wating
                 time.sleep(0.5)
 
-            print("Processes finished")
+    print(f"✅ [{target_table}] Data successfully imported\n")
 
 
-def import_to_db(
-    df: pl.DataFrame,
-    target_table: str,
-    filepath: str,
-    map_fn: MapFn,
-    db_con: duckdb.DuckDBPyConnection,
-):
-    print(f"Importing data to db: {path.basename(filepath)}")
+def fetch_and_map(ftp_path: str, map_fn: MapFn, target_table: str) -> pl.DataFrame:
+    print(f"⬇️  [{target_table}] Downloading file from ftp: '{ftp_path}'")
+    df = ftp.fetch_dataframe(ftp_path)
 
-    # Import fetched data
-    db.import_dataframe(target_table, map_fn(df))
-    db.mark_file_as_imported(filepath, target_table, db_con)
+    row_count = df.select(pl.count())[0, 0]
+    return (map_fn(df) if row_count > 0 else df, row_count)

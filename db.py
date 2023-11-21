@@ -33,7 +33,8 @@ def import_dataframe(
 ):
     # Since this is function is running on a controlled environment we don't sanitize the table name
     if has_table(table_name, db_con):
-        db_con.sql(f"INSERT INTO {table_name} SELECT * FROM df")
+        cols = ",".join((f'"{col}"' for col in df.columns))
+        db_con.sql(f"INSERT INTO {table_name} ({cols}) SELECT * FROM df")
     else:
         db_con.sql(f"CREATE TABLE {table_name} AS SELECT * FROM df")
 

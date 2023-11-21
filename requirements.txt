@@ -3,4 +3,3 @@ SQLAlchemy
 dbfread
 pyarrow
 duckdb
-fsspec
