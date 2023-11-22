@@ -19,9 +19,9 @@ def map_sih_rd(df: pl.DataFrame):
             .then(None)
             .otherwise(pl.col("GESTOR_CPF").str.lstrip("0"))
             .name.keep(),
-            pl.when(pl.col("INSC_PN").cast(pl.Int64) == 0)
-            .then(None)
-            .otherwise(pl.col("INSC_PN").str.lstrip("0"))
+            pl.when(pl.col("INSC_PN").str.contains("[1-9]"))
+            .then(pl.col("INSC_PN").str.lstrip("0"))
+            .otherwise(None)
             .name.keep(),
         )
         .with_columns(
@@ -47,7 +47,7 @@ def map_sih_rd(df: pl.DataFrame):
                 pl.col("UTI_INT_AL").cast(pl.UInt8),
                 pl.col("UTI_INT_TO").cast(pl.UInt16),
                 pl.col("DIAR_ACOM").cast(pl.UInt16),
-                pl.col("QT_DIARIAS").cast(pl.UInt16),
+                pl.col("QT_DIARIAS").cast(pl.Int32),
                 pl.col("PROC_SOLIC").cast(pl.Utf8),
                 pl.col("PROC_REA").cast(pl.Utf8),
                 pl.col("VAL_SH").cast(pl.Float64),
@@ -92,7 +92,7 @@ def map_sih_rd(df: pl.DataFrame):
                 pl.col("GESTRISCO").cast(pl.UInt8),
                 pl.col("INSC_PN").cast(pl.Utf8),
                 pl.col("SEQ_AIH5").cast(pl.Utf8),
-                pl.col("CBOR").cast(pl.UInt32),
+                pl.col("CBOR").cast(pl.Utf8),
                 pl.col("CNAER").cast(pl.UInt16),
                 pl.col("VINCPREV").cast(pl.UInt8),
                 pl.col("GESTOR_COD").cast(pl.UInt16),
