@@ -10,7 +10,7 @@ from dbfread import DBF
 import polars as pl
 
 
-def fetch_dataframe(ftp_path: str) -> pl.DataFrame:
+def fetch_dbc_as_df(ftp_path: str) -> pl.DataFrame:
     response = request.urlopen(ftp_path)
     dbc_raw = response.read()
 

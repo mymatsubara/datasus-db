@@ -1,5 +1,24 @@
 import polars as pl
-from maps.pl_utils import upsert_column
+from pl_utils import upsert_column
+import datasus
+import ftp
+
+TABLE_NAME = "SIH_RD_SISTEMA_INFORMACOES_HOSPITALARES"
+
+
+def import_sih_rh():
+    print(f"⏳ [{TABLE_NAME}] Starting import...")
+
+    datasus.import_from_ftp(
+        [TABLE_NAME],
+        "/dissemin/publicos/SIHSUS/200801_/Dados/RD*.dbc",
+        fetch_sih_rh,
+    )
+
+
+def fetch_sih_rh(ftp_path: str):
+    df = ftp.fetch_dbc_as_df(ftp_path)
+    return {TABLE_NAME: map_sih_rd(df)}
 
 
 def map_sih_rd(df: pl.DataFrame):

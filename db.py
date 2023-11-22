@@ -19,12 +19,15 @@ CREATE TABLE IF NOT EXISTS {IMPORT_TABLE} (
 
 
 def check_new_files(
-    files: list[str], target_table: str, db_con: duckdb.DuckDBPyConnection
+    files: list[str], target_tables: list[str], db_con: duckdb.DuckDBPyConnection
 ):
-    imported_files = db_con.execute(
-        f"SELECT file FROM {IMPORT_TABLE} where table_name = ?", [target_table]
+    tables = ",".join((f"'{table}'" for table in target_tables))
+
+    imported_files = db_con.query(
+        f"SELECT file FROM {IMPORT_TABLE} WHERE table_name IN ({tables})"
     ).df()["file"]
     imported_files = set(imported_files)
+
     return [file for file in files if not path.basename(file) in imported_files]
 
 

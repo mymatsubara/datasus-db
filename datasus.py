@@ -11,21 +11,21 @@ import time
 import random
 
 MapFn = Callable[[pl.DataFrame], pl.DataFrame]
+FetchFn = Callable[[str], dict[str, pl.DataFrame]]
 
 
 def import_from_ftp(
-    target_table: str,
+    target_tables: list[str],
     ftp_pattern: str,
-    map_fn: MapFn,
+    fetch_fn: FetchFn,
     db_string="datasus.db",
     ftp_host="ftp.datasus.gov.br",
 ):
-    print(f"⏳ [{target_table}] Starting data import...")
-
     with duckdb.connect(db_string) as db_con:
+        target_tables_set = set(target_tables)
         files = ftp.get_matching_files(ftp_host, ftp_pattern)
         db.create_import_table(db_con)
-        new_files = db.check_new_files(files, target_table, db_con)
+        new_files = db.check_new_files(files, target_tables, db_con)
         new_filepaths = [f"ftp://{ftp_host}{file}" for file in new_files]
 
         # Shuffle files to import in random order to reduce the chance of importing multiple large files at the same time
@@ -44,8 +44,11 @@ def import_from_ftp(
                     (
                         filepath,
                         pool.apply_async(
-                            fetch_and_map,
-                            args=(filepath, map_fn, target_table),
+                            log_fetch,
+                            args=(
+                                filepath,
+                                fetch_fn,
+                            ),
                         ),
                     )
                     for filepath in new_filepaths
@@ -59,27 +62,30 @@ def import_from_ftp(
                             try:
                                 # Import fetched data
                                 filename = path.basename(filepath)
-                                (df, row_count) = process.get()
+                                tables_data = process.get()
 
-                                msg = f"💾 [{files_imported + 1}/{total_files}] Saving data from file to db: '{filename}'"
+                                msg = f"📂 [{files_imported + 1}/{total_files}] Importing data from file {filename}"
                                 print(msg)
 
-                                if row_count != 0:
-                                    db.import_dataframe(target_table, df, db_con)
-                                else:
-                                    print(
-                                        f"⚠️ [{target_table}] '{filename}' has no data"
-                                    )
+                                for table in tables_data.keys():
+                                    if not table in target_tables_set:
+                                        print(
+                                            f"❌ Table name '{table}' not declared in 'target_tables': {target_tables}",
+                                            file=sys.stderr,
+                                        )
+                                        continue
 
-                                db.mark_file_as_imported(filepath, target_table, db_con)
-                                files_imported += 1
+                                    df = tables_data[table]
+                                    import_table_data(df, table, filepath, db_con)
 
                             except Exception as e:
                                 print(
-                                    f"❌ [{target_table}] Error while importing '{filepath}'",
+                                    f"❌ Error while importing '{filepath}'",
                                     file=sys.stderr,
                                 )
                                 errors.append((filepath, e))
+
+                            files_imported += 1
 
                         else:
                             still_wating.append((filepath, process))
@@ -88,25 +94,40 @@ def import_from_ftp(
                     time.sleep(0.5)
 
     if len(errors) == 0:
-        print(f"✅ [{target_table}] Data successfully imported\n")
+        print(f"✅ Data successfully imported")
     else:
         print(
-            f"⚠️ [{target_table}] {len(errors)} out of {total_files} imports failed:",
+            f"⚠️ {len(errors)} out of {total_files} imports failed:",
             file=sys.stderr,
         )
         for filepath, e in errors:
             print(f"    ❌ {path.basename(filepath)}: {e}")
 
 
-def fetch_and_map(ftp_path: str, map_fn: MapFn, target_table: str) -> pl.DataFrame:
-    print(f"⬇️  [{target_table}] Downloading file from ftp: '{ftp_path}'")
-    df = ftp.fetch_dataframe(ftp_path)
-
-    row_count = df.select(pl.count())[0, 0]
-    return (map_fn(df) if row_count > 0 else df, row_count)
+def log_fetch(ftp_path: str, fetch_fn: FetchFn):
+    print(f"⬇️  Downloading file from ftp: '{ftp_path}'")
+    return fetch_fn(ftp_path)
 
 
 def batch(iterable, n=1):
     l = len(iterable)
     for ndx in range(0, l, n):
         yield iterable[ndx : min(ndx + n, l)]
+
+
+def import_table_data(
+    df: pl.DataFrame,
+    target_table: str,
+    filepath: str,
+    db_con: duckdb.DuckDBPyConnection,
+):
+    filename = path.basename(filepath)
+    print(f"💾 [{target_table}] Saving data to database from: {filename}")
+    row_count = df.select(pl.count())[0, 0]
+
+    if row_count != 0:
+        db.import_dataframe(target_table, df, db_con)
+    else:
+        print(f"⚠️ [{target_table}] '{filename}' has no data")
+
+    db.mark_file_as_imported(filepath, target_table, db_con)

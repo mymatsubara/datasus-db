@@ -1,4 +1,23 @@
 import polars as pl
+import datasus
+import ftp
+
+TABLE_NAME = "PO_PAINEL_ONCOLOGIA"
+
+
+def import_po():
+    print(f"⏳ [{TABLE_NAME}] Starting import...")
+
+    datasus.import_from_ftp(
+        [TABLE_NAME],
+        "/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/POBR*.dbc",
+        fetch_po,
+    )
+
+
+def fetch_po(ftp_path: str):
+    df = ftp.fetch_dbc_as_df(ftp_path)
+    return {TABLE_NAME: map_po(df)}
 
 
 def map_po(df: pl.DataFrame):

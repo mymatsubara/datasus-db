@@ -1,7 +1,7 @@
 import polars as pl
-from maps.pl_utils import (
+import ftp
+from pl_utils import (
     upsert_column,
-    upsert_date_column,
     to_schema,
     Column,
     DateColumn,
@@ -10,6 +10,30 @@ from maps.pl_utils import (
     fill_text,
     fill_non_numeric,
 )
+import datasus
+
+TABLE_NAME = "SIM_DO_SISTEMA_DE_INFORMACAO_DE_MORTALIDADE"
+
+
+def import_sim_do():
+    print(f"⏳ [{TABLE_NAME}] Starting import...")
+
+    datasus.import_from_ftp(
+        [TABLE_NAME],
+        "/dissemin/publicos/SIM/CID10/DORES/DO*.dbc",
+        fetch_sim_do,
+    )
+
+    datasus.import_from_ftp(
+        [TABLE_NAME],
+        "/dissemin/publicos/SIM/PRELIM/DORES/DO*.dbc",
+        fetch_sim_do,
+    )
+
+
+def fetch_sim_do(ftp_path: str):
+    df = ftp.fetch_dbc_as_df(ftp_path)
+    return {TABLE_NAME: map_sim_do(df)}
 
 
 def map_sim_do(df: pl.DataFrame):
