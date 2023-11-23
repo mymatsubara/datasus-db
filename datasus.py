@@ -75,6 +75,11 @@ def import_from_ftp(
                                         )
                                         continue
 
+                                    if db.is_file_imported(filename, table, db_con):
+                                        msg = f"🗃️ [{table}] File '{filename}' already imported"
+                                        print(msg)
+                                        continue
+
                                     df = tables_data[table]
                                     import_table_data(df, table, filepath, db_con)
 

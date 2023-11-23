@@ -1,11 +1,11 @@
-import pandas as pd
 import urllib.request as request
 import ftplib
+import io
 import subprocess
 import shutil
 import os.path as path
 import os
-from simpledbf import Dbf5
+from zipfile import ZipFile
 from dbfread import DBF
 import polars as pl
 
@@ -56,3 +56,10 @@ def dbc_2_dbf(dbc: str, dbf: str):
 def rm(file: str):
     if path.exists(file):
         os.remove(file)
+
+
+def fetch_from_zip(ftp_path: str, files: list[str]):
+    response = request.urlopen(ftp_path)
+    zip_file = ZipFile(io.BytesIO(response.read()))
+
+    return {file: zip_file.read(file) for file in files}

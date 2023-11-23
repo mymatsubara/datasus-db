@@ -24,11 +24,28 @@ def check_new_files(
     tables = ",".join((f"'{table}'" for table in target_tables))
 
     imported_files = db_con.query(
-        f"SELECT file FROM {IMPORT_TABLE} WHERE table_name IN ({tables})"
+        f"""
+SELECT file, count(*) as count 
+FROM {IMPORT_TABLE}  
+WHERE table_name IN ({tables})
+GROUP BY file, table_name
+HAVING count = {len(target_tables)}"""
     ).df()["file"]
     imported_files = set(imported_files)
 
     return [file for file in files if not path.basename(file) in imported_files]
+
+
+def is_file_imported(
+    file: str, target_table: str, db_con: duckdb.DuckDBPyConnection
+) -> bool:
+    return (
+        db_con.execute(
+            f"SELECT COUNT(*) as count FROM {IMPORT_TABLE} WHERE table_name = ? AND file = ?",
+            [target_table, path.basename(file)],
+        ).df()["count"][0]
+        == 1
+    )
 
 
 def import_dataframe(
