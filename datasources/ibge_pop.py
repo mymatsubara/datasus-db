@@ -3,7 +3,8 @@ import polars as pl
 import os.path as path
 from pl_utils import to_schema, Column
 import ftp
-from datasources.auxiliar.municipios import import_municipios
+from datasources.auxiliar import import_auxiliar_tables
+from views.ibge_piramide_etaria import create_piramide_etaria_view
 
 MAIN_TABLE = "IBGE_POP"
 MUNICIPIO_TABLE = "IBGE_POP_MUNICIPIO"
@@ -16,7 +17,8 @@ def import_ibge_pop():
         [MAIN_TABLE], "/dissemin/publicos/IBGE/POP/POPBR*.zip", fetch_ibge_pop
     )
 
-    import_municipios()
+    import_auxiliar_tables()
+    create_piramide_etaria_view()
 
 
 def fetch_ibge_pop(ftp_path: str):

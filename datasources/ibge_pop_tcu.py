@@ -41,4 +41,9 @@ def map_ibge_pop_tcu(df: pl.DataFrame):
             Column("ANO", pl.UInt16),
             Column("POPULACAO", pl.UInt32),
         ],
+    ).with_columns(
+        pl.when(pl.col("MUNIC_RES") >= 1_000_000)
+        .then(pl.col("MUNIC_RES") // 10)
+        .otherwise(pl.col("MUNIC_RES"))
+        .name.keep()
     )

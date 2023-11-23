@@ -1,0 +1,33 @@
+import duckdb
+
+VIEW_DDL = """
+CREATE OR REPLACE VIEW IBGE_PIRAMIDE_ETARIA AS with POP AS (
+	select 
+		MUNIC_RES, 
+		ANO, 
+		SEXO, 
+		INICIO_FXETARIA, 
+		FIM_FXETARIA, 
+		SUM(POPULACAO) AS POPULACAO 
+	from main.IBGE_POP
+	group by MUNIC_RES, ANO, SEXO, INICIO_FXETARIA, FIM_FXETARIA
+),
+POP_PERCENTUAL AS (
+	select 
+		MUNIC_RES,
+		SEXO,
+		ANO,
+		INICIO_FXETARIA,
+		FIM_FXETARIA,
+		POPULACAO,
+		POPULACAO / SUM(POPULACAO) OVER (PARTITION BY MUNIC_RES, ANO) AS PERCETUAL,
+	from POP
+)
+select MUNIC_RES, SEXO, ANO, INICIO_FXETARIA, FIM_FXETARIA, POPULACAO, PERCETUAL 
+from POP_PERCENTUAL;
+"""
+
+
+def create_piramide_etaria_view(db_string="datasus.db"):
+    with duckdb.connect(db_string) as con:
+        con.execute(VIEW_DDL)
