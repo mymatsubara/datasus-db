@@ -3,14 +3,20 @@ import polars as pl
 import os.path as path
 from pl_utils import to_schema, Column
 import ftp
+from datasources.auxiliar.municipios import import_municipios
 
-TABLE_NAME = "IBGE_POP"
+MAIN_TABLE = "IBGE_POP"
+MUNICIPIO_TABLE = "IBGE_POP_MUNICIPIO"
 
 
 def import_ibge_pop():
+    print(f"⏳ [{MAIN_TABLE}] Starting import...")
+
     datasus.import_from_ftp(
-        [TABLE_NAME], "/dissemin/publicos/IBGE/POP/POPBR*.zip", fetch_ibge_pop
+        [MAIN_TABLE], "/dissemin/publicos/IBGE/POP/POPBR*.zip", fetch_ibge_pop
     )
+
+    import_municipios()
 
 
 def fetch_ibge_pop(ftp_path: str):
@@ -28,19 +34,19 @@ def fetch_ibge_pop(ftp_path: str):
         },
     )
 
-    return {TABLE_NAME: map_ibge_pop(df)}
+    return {MAIN_TABLE: map_ibge_pop(df)}
 
 
 def map_ibge_pop(df: pl.DataFrame):
     df = (
         df.with_columns(
-            pl.when(pl.col("FXETARIA") == "I000")
-            .then("0")
+            pl.when(pl.col("FXETARIA").is_in(["I000", "R000"]))
+            .then("-100")
             .otherwise(pl.col("FXETARIA"))
             .name.keep(),
         )
         .with_columns(
-            pl.col("FXETARIA").cast(pl.UInt64),
+            pl.col("FXETARIA").cast(pl.Int64),
         )
         .with_columns(
             pl.when(pl.col("FXETARIA") == 0)
@@ -59,9 +65,10 @@ def map_ibge_pop(df: pl.DataFrame):
         [
             Column("MUNIC_RES", pl.UInt32),
             Column("ANO", pl.UInt16),
+            Column("SEXO", pl.UInt8),
             Column("SITUACAO", pl.UInt8),
-            Column("INICIO_FXETARIA", pl.UInt8),
-            Column("FIM_FXETARIA", pl.UInt8),
+            Column("INICIO_FXETARIA", pl.Int8),
+            Column("FIM_FXETARIA", pl.Int8),
             Column("POPULACAO", pl.UInt32),
         ],
     )

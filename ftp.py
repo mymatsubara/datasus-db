@@ -62,4 +62,8 @@ def fetch_from_zip(ftp_path: str, files: list[str]):
     response = request.urlopen(ftp_path)
     zip_file = ZipFile(io.BytesIO(response.read()))
 
-    return {file: zip_file.read(file) for file in files}
+    lowercase_filenames = {
+        file.filename.lower(): file.filename for file in zip_file.filelist
+    }
+
+    return {file: zip_file.read(lowercase_filenames[file.lower()]) for file in files}
