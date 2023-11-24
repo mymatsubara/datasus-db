@@ -3,6 +3,7 @@ import polars as pl
 import os.path as path
 from pl_utils import to_schema, Column
 from dbfread import DBF
+import dbf
 import ftp
 
 MAIN_TABLE = "IBGE_POP_TCU"
@@ -20,15 +21,7 @@ def fetch_ibge_pop_tcu(ftp_path: str):
     dbf_file = path.basename(ftp_path).split(".")[0] + ".dbf"
     files = ftp.fetch_from_zip(ftp_path, [dbf_file])
 
-    tmp_file = path.join(".tmp", dbf_file)
-
-    with open(tmp_file, "wb") as f:
-        f.write(files[dbf_file])
-
-    dbf = DBF(tmp_file)
-    df = pl.DataFrame(iter(dbf))
-
-    ftp.rm(tmp_file)
+    df = dbf.read_as_df(dbf_file, files[dbf_file])
 
     return {MAIN_TABLE: map_ibge_pop_tcu(df)}
 

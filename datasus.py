@@ -99,10 +99,10 @@ def import_from_ftp(
                     time.sleep(0.5)
 
     if len(errors) == 0:
-        print(f"✅ Data successfully imported")
+        print(f"✅ Data successfully imported to tables: ", target_tables, "\n")
     else:
         print(
-            f"⚠️ {len(errors)} out of {total_files} imports failed:",
+            f"⚠️  {len(errors)} out of {total_files} imports failed:",
             file=sys.stderr,
         )
         for filepath, e in errors:

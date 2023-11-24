@@ -1,6 +1,7 @@
 import urllib.request as request
 import ftplib
 import io
+import dbf
 import subprocess
 import shutil
 import os.path as path
@@ -29,8 +30,8 @@ def fetch_dbc_as_df(ftp_path: str) -> pl.DataFrame:
 
     df = pl.DataFrame(iter(DBF(dbf_file, encoding="iso-8859-1")))
 
-    rm(dbc_file)
-    rm(dbf_file)
+    dbf.rm(dbc_file)
+    dbf.rm(dbf_file)
 
     return df
 
@@ -51,11 +52,6 @@ def dbc_2_dbf(dbc: str, dbf: str):
     subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).wait()
     generated_dbf = path.join(cwd, path.basename(dbc.replace(".dbc", ".dbf")))
     shutil.move(generated_dbf, dbf)
-
-
-def rm(file: str):
-    if path.exists(file):
-        os.remove(file)
 
 
 def fetch_from_zip(ftp_path: str, files: list[str]):

@@ -28,7 +28,7 @@ def check_new_files(
 SELECT file, count(*) as count 
 FROM {IMPORT_TABLE}  
 WHERE table_name IN ({tables})
-GROUP BY file, table_name
+GROUP BY file
 HAVING count = {len(target_tables)}"""
     ).df()["file"]
     imported_files = set(imported_files)
