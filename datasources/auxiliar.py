@@ -32,11 +32,11 @@ def fetch_sim_auxiliar(ftp_path: str):
     uf_file = "TABELAS/TABUF.DBF"
     files = ftp.fetch_from_zip(ftp_path, [cid10_file, municipio_file, uf_file])
 
-    cid10_df = dbf.read_as_df(cid10_file, files[cid10_file], encoding="latin-1")
+    cid10_df = dbf.read_as_df(cid10_file, files[cid10_file], encoding="cp850")
     municipio_df = dbf.read_as_df(
-        municipio_file, files[municipio_file], encoding="latin-1"
+        municipio_file, files[municipio_file], encoding="cp850"
     )
-    uf_df = dbf.read_as_df(uf_file, files[uf_file], encoding="latin-1")
+    uf_df = dbf.read_as_df(uf_file, files[uf_file], encoding="cp850")
 
     return {
         CID10_DOENCA_TABLE: map_cid10(cid10_df),
