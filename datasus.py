@@ -9,6 +9,7 @@ import multiprocessing
 import polars as pl
 import time
 import random
+import re
 
 MapFn = Callable[[pl.DataFrame], pl.DataFrame]
 FetchFn = Callable[[str], dict[str, pl.DataFrame]]
@@ -16,14 +17,18 @@ FetchFn = Callable[[str], dict[str, pl.DataFrame]]
 
 def import_from_ftp(
     target_tables: list[str],
-    ftp_pattern: str,
+    ftp_glob: str,
     fetch_fn: FetchFn,
     db_string="datasus.db",
     ftp_host="ftp.datasus.gov.br",
+    ftp_exclude_regex: str = None,
 ):
     with duckdb.connect(db_string) as db_con:
         target_tables_set = set(target_tables)
-        files = ftp.get_matching_files(ftp_host, ftp_pattern)
+        files = ftp.get_matching_files(ftp_host, ftp_glob)
+        if ftp_exclude_regex:
+            files = remove_matching(files, ftp_exclude_regex)
+
         db.create_import_table(db_con)
         new_files = db.check_new_files(files, target_tables, db_con)
         new_filepaths = [f"ftp://{ftp_host}{file}" for file in new_files]
@@ -136,3 +141,8 @@ def import_table_data(
         print(f"⚠️ [{target_table}] '{filename}' has no data")
 
     db.mark_file_as_imported(filepath, target_table, db_con)
+
+
+def remove_matching(list: list[str], regex: str):
+    compiled = re.compile(regex)
+    return [e for e in list if not compiled.match(e)]

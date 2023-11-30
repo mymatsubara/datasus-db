@@ -22,12 +22,14 @@ def import_sim_do():
         [MAIN_TABLE],
         "/dissemin/publicos/SIM/CID10/DORES/DO*.dbc",
         fetch_sim_do,
+        ftp_exclude_regex=r".*/DOBR.*\.dbc",
     )
 
     datasus.import_from_ftp(
         [MAIN_TABLE],
         "/dissemin/publicos/SIM/PRELIM/DORES/DO*.dbc",
         fetch_sim_do,
+        ftp_exclude_regex=r".*/DOBR.*\.dbc",
     )
 
 

@@ -1,4 +1,5 @@
 .tmp/
 *.db*
 __pycache__
+*.parquet
 
