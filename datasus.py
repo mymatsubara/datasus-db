@@ -93,6 +93,7 @@ def import_from_ftp(
                                     f"❌ Error while importing '{filepath}'",
                                     file=sys.stderr,
                                 )
+                                print("Message: ", e, file=sys.stderr)
                                 errors.append((filepath, e))
 
                             files_imported += 1
