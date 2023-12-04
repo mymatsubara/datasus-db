@@ -13,7 +13,7 @@ from pl_utils import (
 )
 import datasus
 
-MAIN_TABLE = "SIM_DO_SISTEMA_DE_INFORMACAO_DE_MORTALIDADE"
+MAIN_TABLE = "SIM"
 
 
 def import_sim_do(db_file="datasus.db"):

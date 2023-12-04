@@ -4,7 +4,7 @@ import datasus
 import ftp
 import logging
 
-MAIN_TABLE = "SIH_RD_SISTEMA_INFORMACOES_HOSPITALARES"
+MAIN_TABLE = "SIH_RD"
 
 
 def import_sih_rh(db_file="datasus.db"):

@@ -8,7 +8,6 @@ from datasources.auxiliar import import_auxiliar_tables
 from views.ibge_piramide_etaria import create_piramide_etaria_view
 
 MAIN_TABLE = "IBGE_POP"
-MUNICIPIO_TABLE = "IBGE_POP_MUNICIPIO"
 
 
 def import_ibge_pop(db_file="datasus.db"):

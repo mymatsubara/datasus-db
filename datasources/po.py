@@ -4,7 +4,7 @@ import ftp
 from pl_utils import to_schema, Column, DateColumn
 import logging
 
-MAIN_TABLE = "PO_PAINEL_ONCOLOGIA"
+MAIN_TABLE = "PO"
 
 
 def import_po(db_file="datasus.db"):
