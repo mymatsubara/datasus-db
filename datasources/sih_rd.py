@@ -8,7 +8,7 @@ import logging
 MAIN_TABLE = "SIH_RD"
 
 
-def import_sih_rh(db_file="datasus.db", years=["*"], states=["*"], months=["*"]):
+def import_sih_rd(db_file="datasus.db", years=["*"], states=["*"], months=["*"]):
     """
     Import RD (Autorização de Internação Hospitalar Reduzida) from SIMSUS (Sistema de Informações Hospitalares do SUS).
 
