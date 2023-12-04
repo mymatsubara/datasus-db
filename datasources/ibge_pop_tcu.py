@@ -6,16 +6,28 @@ from dbfread import DBF
 import dbf
 import ftp
 import logging
+import utils
 
 MAIN_TABLE = "IBGE_POP_TCU"
 
 
-def import_ibge_pop_tcu(db_file="datasus.db"):
+def import_ibge_pop_tcu(db_file="datasus.db", years=["*"]):
+    """
+    Import population estimated per city by TCU (Tribunal de Contas da União).
+
+    Args:
+        `db_file (str)`: path to the duckdb file in which the data will be imported.
+
+        `years (list[str])`: list of years which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+    """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],
-        "/dissemin/publicos/IBGE/POPTCU/POPTBR*.zip",
+        [
+            f"/dissemin/publicos/IBGE/POPTCU/POPTBR{utils.format_year(year)}.zip*"
+            for year in years
+        ],
         fetch_ibge_pop_tcu,
         db_file,
     )

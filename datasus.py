@@ -1,6 +1,4 @@
 from typing import Callable
-import sys
-import pandas as pd
 import ftp
 import os.path as path
 import duckdb
@@ -11,6 +9,8 @@ import time
 import random
 import re
 import logging
+from typing import Iterable
+
 
 MapFn = Callable[[pl.DataFrame], pl.DataFrame]
 FetchFn = Callable[[str], dict[str, pl.DataFrame]]
@@ -18,7 +18,7 @@ FetchFn = Callable[[str], dict[str, pl.DataFrame]]
 
 def import_from_ftp(
     target_tables: list[str],
-    ftp_glob: str,
+    ftp_globs: Iterable[str],
     fetch_fn: FetchFn,
     db_file="datasus.db",
     ftp_host="ftp.datasus.gov.br",
@@ -26,7 +26,7 @@ def import_from_ftp(
 ):
     with duckdb.connect(db_file) as db_con:
         target_tables_set = set(target_tables)
-        files = ftp.get_matching_files(ftp_host, ftp_glob)
+        files = ftp.get_matching_files(ftp_host, ftp_globs)
         if ftp_exclude_regex:
             files = remove_matching(files, ftp_exclude_regex)
 

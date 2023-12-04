@@ -1,4 +1,3 @@
-pandas
 SQLAlchemy
 dbfread
 pyarrow

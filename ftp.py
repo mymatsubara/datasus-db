@@ -1,7 +1,10 @@
 import urllib.request as request
 import ftplib
+import logging
 import io
 import dbf
+from typing import Iterable
+from utils import flatten
 import subprocess
 import shutil
 import os.path as path
@@ -36,10 +39,19 @@ def fetch_dbc_as_df(ftp_path: str) -> pl.DataFrame:
     return df
 
 
-def get_matching_files(host: str, pattern: str):
+def get_matching_files(host: str, patterns: Iterable[str]):
     ftp = ftplib.FTP(host)
     ftp.login()
-    return ftp.nlst(pattern)
+
+    return set(flatten((try_nlst(pattern, ftp) for pattern in patterns)))
+
+
+def try_nlst(pattern: str, ftp: ftplib.FTP):
+    files = ftp.nlst(pattern)
+    if len(files) == 0:
+        logging.warn(f"⚠️  Could not found file matching: {pattern}")
+
+    return files
 
 
 def dbc_2_dbf(dbc: str, dbf: str):

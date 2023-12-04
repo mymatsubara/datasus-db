@@ -9,10 +9,10 @@ import logging
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    import_sim_do()
-    import_po()
-    import_ibge_pop()
-    import_ibge_pop_tcu()
+    # import_sim_do()
+    # import_po()
+    # import_ibge_pop()
+    import_ibge_pop_tcu(years=[2024, 23, "19", 2012])
 
 
 if __name__ == "__main__":

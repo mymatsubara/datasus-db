@@ -17,7 +17,7 @@ def import_auxiliar_tables(db_file="datasus.db"):
 
     datasus.import_from_ftp(
         [CID10_DOENCA_TABLE, MUNICIPIO_TABLE, UF_TABLE],
-        "/dissemin/publicos/SIM/CID10/DOCS/Docs_Tabs_CID10.zip*",
+        ["/dissemin/publicos/SIM/CID10/DOCS/Docs_Tabs_CID10.zip*"],
         fetch_sim_auxiliar,
         db_file=db_file,
     )

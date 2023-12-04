@@ -1,5 +1,4 @@
 import duckdb
-import pandas as pd
 import os.path as path
 import polars as pl
 
