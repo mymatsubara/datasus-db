@@ -1,18 +1,31 @@
 import polars as pl
 import datasus
 import ftp
+import utils
 from pl_utils import to_schema, Column, DateColumn
 import logging
 
 MAIN_TABLE = "PO"
 
 
-def import_po(db_file="datasus.db"):
+def import_po(db_file="datasus.db", years=["*"]):
+    """
+    Import PO (Painel de Oncologia) data (since 2013).
+
+    Args:
+        `db_file (str)`: path to the duckdb file in which the data will be imported.
+
+        `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2013, 2020]`
+    """
+
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],
-        "/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/POBR*.dbc",
+        [
+            f"/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/POBR{utils.format_year(year, digits=4)}.dbc*"
+            for year in years
+        ],
         fetch_po,
         db_file=db_file,
     )
