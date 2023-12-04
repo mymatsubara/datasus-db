@@ -19,12 +19,12 @@ MAIN_TABLE = "SIM_DO"
 
 def import_sim_do(db_file="datasus.db", years=["*"], states=["*"]):
     """
-    Import IBGE population by age and sex per city.
+    Import DO (Declaração de Óbito) from SIM (Sistema de informações de Mortalidade).
 
     Args:
         `db_file (str)`: path to the duckdb file in which the data will be imported to.
 
-        `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
 
         `states (list[str])`: list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`
     """

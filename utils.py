@@ -1,13 +1,20 @@
 import itertools
 
 
-def format_year(n, digits=2):
-    if isinstance(n, str) and not n.isnumeric():
+def format_year(year, digits=2):
+    if isinstance(year, str) and not year.isnumeric():
         return "*"
 
-    n = str(n).zfill(digits)
+    year = str(year).zfill(digits)
 
-    return n[-digits:]
+    return year[-digits:]
+
+
+def format_month(month):
+    if isinstance(month, str) and not month.isnumeric():
+        return "*"
+
+    return str(month).zfill(2)
 
 
 def flatten(list_of_lists):

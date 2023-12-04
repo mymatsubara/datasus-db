@@ -15,7 +15,7 @@ def import_po(db_file="datasus.db", years=["*"]):
     Args:
         `db_file (str)`: path to the duckdb file in which the data will be imported to.
 
-        `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2013, 2020]`
+        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2013, 2020]`
     """
 
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")

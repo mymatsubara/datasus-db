@@ -18,7 +18,7 @@ def import_ibge_pop(db_file="datasus.db", years=["*"]):
     Args:
         `db_file (str)`: path to the duckdb file in which the data will be imported to.
 
-        `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
     """
 
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")

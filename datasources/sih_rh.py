@@ -1,18 +1,36 @@
 import polars as pl
 from pl_utils import to_schema, Column, DateColumn
 import datasus
+import utils
 import ftp
 import logging
 
 MAIN_TABLE = "SIH_RD"
 
 
-def import_sih_rh(db_file="datasus.db"):
+def import_sih_rh(db_file="datasus.db", years=["*"], states=["*"], months=["*"]):
+    """
+    Import RD (Autorização de Internação Hospitalar Reduzida) from SIMSUS (Sistema de Informações Hospitalares do SUS).
+
+    Args:
+        `db_file (str)`: path to the duckdb file in which the data will be imported to.
+
+        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+
+        `states (list[str])`: list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`
+
+        `months (list[int])`: list of months numbers (1-12) for which data will be imported (if available). Eg: `[1, 12, 6]`
+    """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],
-        "/dissemin/publicos/SIHSUS/200801_/Dados/RD*.dbc",
+        [
+            f"/dissemin/publicos/SIHSUS/200801_/Dados/RD{state.upper()}{utils.format_year(year)}{utils.format_month(month)}.dbc*"
+            for year in years
+            for state in states
+            for month in months
+        ],
         fetch_sih_rh,
         db_file=db_file,
     )
