@@ -5,12 +5,13 @@ from pl_utils import to_schema, Column
 from dbfread import DBF
 import dbf
 import ftp
+import logging
 
 MAIN_TABLE = "IBGE_POP_TCU"
 
 
 def import_ibge_pop_tcu():
-    print(f"⏳ [{MAIN_TABLE}] Starting import...")
+    logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE], "/dissemin/publicos/IBGE/POPTCU/POPTBR*.zip", fetch_ibge_pop_tcu

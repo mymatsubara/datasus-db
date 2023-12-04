@@ -2,12 +2,13 @@ import polars as pl
 import datasus
 import ftp
 from pl_utils import to_schema, Column, DateColumn
+import logging
 
 MAIN_TABLE = "PO_PAINEL_ONCOLOGIA"
 
 
 def import_po():
-    print(f"⏳ [{MAIN_TABLE}] Starting import...")
+    logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],

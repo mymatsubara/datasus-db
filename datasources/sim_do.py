@@ -1,5 +1,6 @@
 import polars as pl
 import ftp
+import logging
 from pl_utils import (
     upsert_column,
     to_schema,
@@ -16,7 +17,7 @@ MAIN_TABLE = "SIM_DO_SISTEMA_DE_INFORMACAO_DE_MORTALIDADE"
 
 
 def import_sim_do():
-    print(f"⏳ [{MAIN_TABLE}] Starting import...")
+    logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],

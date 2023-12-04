@@ -2,12 +2,13 @@ import polars as pl
 from pl_utils import to_schema, Column, DateColumn
 import datasus
 import ftp
+import logging
 
 MAIN_TABLE = "SIH_RD_SISTEMA_INFORMACOES_HOSPITALARES"
 
 
 def import_sih_rh():
-    print(f"⏳ [{MAIN_TABLE}] Starting import...")
+    logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],

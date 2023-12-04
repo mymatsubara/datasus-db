@@ -10,6 +10,7 @@ import polars as pl
 import time
 import random
 import re
+import logging
 
 MapFn = Callable[[pl.DataFrame], pl.DataFrame]
 FetchFn = Callable[[str], dict[str, pl.DataFrame]]
@@ -70,30 +71,26 @@ def import_from_ftp(
                                 tables_data = process.get()
 
                                 msg = f"📂 [{files_imported + 1}/{total_files}] Importing data from file {filename}"
-                                print(msg)
+                                logging.info(msg)
 
                                 for table in tables_data.keys():
                                     if not table in target_tables_set:
-                                        print(
-                                            f"❌ Table name '{table}' not declared in 'target_tables': {target_tables}",
-                                            file=sys.stderr,
+                                        logging.error(
+                                            f"❌ Table name '{table}' not declared in 'target_tables': {target_tables}"
                                         )
                                         continue
 
                                     if db.is_file_imported(filename, table, db_con):
                                         msg = f"🗃️ [{table}] File '{filename}' already imported"
-                                        print(msg)
+                                        logging.info(msg)
                                         continue
 
                                     df = tables_data[table]
                                     import_table_data(df, table, filepath, db_con)
 
                             except Exception as e:
-                                print(
-                                    f"❌ Error while importing '{filepath}'",
-                                    file=sys.stderr,
-                                )
-                                print("Message: ", e, file=sys.stderr)
+                                logging.error(f"❌ Error while importing '{filepath}'")
+                                logging.error("Message: ", e)
                                 errors.append((filepath, e))
 
                             files_imported += 1
@@ -105,18 +102,17 @@ def import_from_ftp(
                     time.sleep(0.5)
 
     if len(errors) == 0:
-        print(f"✅ Data successfully imported to tables: ", target_tables, "\n")
+        logging.info(f"✅ Data successfully imported to tables: {target_tables}")
     else:
-        print(
+        logging.error(
             f"⚠️  {len(errors)} out of {total_files} imports failed:",
-            file=sys.stderr,
         )
         for filepath, e in errors:
-            print(f"    ❌ {path.basename(filepath)}: {e}")
+            logging.error(f"    ❌ {path.basename(filepath)}: {e}")
 
 
 def log_fetch(ftp_path: str, fetch_fn: FetchFn):
-    print(f"⬇️  Downloading file from ftp: '{ftp_path}'")
+    logging.info(f"⬇️  Downloading file from ftp: '{ftp_path}'")
     return fetch_fn(ftp_path)
 
 
@@ -133,13 +129,13 @@ def import_table_data(
     db_con: duckdb.DuckDBPyConnection,
 ):
     filename = path.basename(filepath)
-    print(f"💾 [{target_table}] Saving data to database from: {filename}")
+    logging.info(f"💾 [{target_table}] Saving data to database from: {filename}")
     row_count = df.select(pl.count())[0, 0]
 
     if row_count != 0:
         db.import_dataframe(target_table, df, db_con)
     else:
-        print(f"⚠️ [{target_table}] '{filename}' has no data")
+        logging.warning(f"⚠️ [{target_table}] '{filename}' has no data")
 
     db.mark_file_as_imported(filepath, target_table, db_con)
 

@@ -1,5 +1,6 @@
 import datasus
 import dbf
+import logging
 import polars as pl
 from pl_utils import fill_empty, Column, to_schema, rename_columns
 import ftp
@@ -12,12 +13,7 @@ CID10_DOENCA_TABLE = "AUX_CID10_DOENCA"
 
 
 def import_auxiliar_tables():
-    print(f"⏳ [AUX_TABLES] Starting import...")
-    # datasus.import_from_ftp(
-    #     [MUNICIPIO_TABLE, UF_TABLE],
-    #     "/dissemin/publicos/PAINEL_ONCOLOGIA/Auxiliar/PAINEL_ONCOLOGIA.zip*",
-    #     fetch_painel_oncologia_auxiliar,
-    # )
+    logging.info(f"⏳ [AUX_TABLES] Starting import...")
 
     datasus.import_from_ftp(
         [CID10_DOENCA_TABLE, MUNICIPIO_TABLE, UF_TABLE],

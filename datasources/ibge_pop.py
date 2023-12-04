@@ -3,6 +3,7 @@ import polars as pl
 import os.path as path
 from pl_utils import to_schema, Column
 import ftp
+import logging
 from datasources.auxiliar import import_auxiliar_tables
 from views.ibge_piramide_etaria import create_piramide_etaria_view
 
@@ -11,7 +12,7 @@ MUNICIPIO_TABLE = "IBGE_POP_MUNICIPIO"
 
 
 def import_ibge_pop():
-    print(f"⏳ [{MAIN_TABLE}] Starting import...")
+    logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE], "/dissemin/publicos/IBGE/POP/POPBR*.zip", fetch_ibge_pop
