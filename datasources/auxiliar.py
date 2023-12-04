@@ -17,7 +17,7 @@ def import_auxiliar_tables(db_file="datasus.db"):
     Import auxiliar tables with some datasus codes definitions (eg: municipios, doenças, ...)
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported.
+        `db_file (str)`: path to the duckdb file in which the data will be imported to.
     """
     logging.info(f"⏳ [AUX_TABLES] Starting import...")
 

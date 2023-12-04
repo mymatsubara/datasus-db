@@ -16,7 +16,7 @@ def import_ibge_pop(db_file="datasus.db", years=["*"]):
     Import IBGE population by age and sex per city.
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported.
+        `db_file (str)`: path to the duckdb file in which the data will be imported to.
 
         `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
     """

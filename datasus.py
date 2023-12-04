@@ -51,10 +51,7 @@ def import_from_ftp(
                         filepath,
                         pool.apply_async(
                             log_fetch,
-                            args=(
-                                filepath,
-                                fetch_fn,
-                            ),
+                            args=(filepath, fetch_fn, logging.getLogger().level),
                         ),
                     )
                     for filepath in new_filepaths
@@ -111,7 +108,8 @@ def import_from_ftp(
             logging.error(f"    ❌ {path.basename(filepath)}: {e}")
 
 
-def log_fetch(ftp_path: str, fetch_fn: FetchFn):
+def log_fetch(ftp_path: str, fetch_fn: FetchFn, log_level: int):
+    logging.getLogger().setLevel(log_level)
     logging.info(f"⬇️  Downloading file from ftp: '{ftp_path}'")
     return fetch_fn(ftp_path)
 

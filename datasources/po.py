@@ -13,7 +13,7 @@ def import_po(db_file="datasus.db", years=["*"]):
     Import PO (Painel de Oncologia) data (since 2013).
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported.
+        `db_file (str)`: path to the duckdb file in which the data will be imported to.
 
         `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2013, 2020]`
     """

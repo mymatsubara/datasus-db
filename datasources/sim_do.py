@@ -1,6 +1,7 @@
 import polars as pl
 import ftp
 import logging
+import utils
 from pl_utils import (
     upsert_column,
     to_schema,
@@ -13,23 +14,41 @@ from pl_utils import (
 )
 import datasus
 
-MAIN_TABLE = "SIM"
+MAIN_TABLE = "SIM_DO"
 
 
-def import_sim_do(db_file="datasus.db"):
-    logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
+def import_sim_do(db_file="datasus.db", years=["*"], states=["*"]):
+    """
+    Import IBGE population by age and sex per city.
 
+    Args:
+        `db_file (str)`: path to the duckdb file in which the data will be imported to.
+
+        `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+
+        `states (list[str])`: list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`
+    """
+    logging.info(f"⏳ [{MAIN_TABLE}] Starting import for non preliminary data...")
     datasus.import_from_ftp(
         [MAIN_TABLE],
-        "/dissemin/publicos/SIM/CID10/DORES/DO*.dbc",
+        [
+            f"/dissemin/publicos/SIM/CID10/DORES/DO{state.upper()}{utils.format_year(year, digits=4)}.dbc*"
+            for year in years
+            for state in states
+        ],
         fetch_sim_do,
         ftp_exclude_regex=r".*/DOBR.*\.dbc",
         db_file=db_file,
     )
 
+    logging.info(f"⏳ [{MAIN_TABLE}] Starting import for preliminary data...")
     datasus.import_from_ftp(
         [MAIN_TABLE],
-        "/dissemin/publicos/SIM/PRELIM/DORES/DO*.dbc",
+        [
+            f"/dissemin/publicos/SIM/PRELIM/DORES/DO{state.upper()}{utils.format_year(year, digits=4)}.dbc*"
+            for year in years
+            for state in states
+        ],
         fetch_sim_do,
         ftp_exclude_regex=r".*/DOBR.*\.dbc",
         db_file=db_file,
