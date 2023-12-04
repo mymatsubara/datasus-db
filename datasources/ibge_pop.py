@@ -4,23 +4,35 @@ import os.path as path
 from pl_utils import to_schema, Column
 import ftp
 import logging
+import utils
 from datasources.auxiliar import import_auxiliar_tables
 from views.ibge_piramide_etaria import create_piramide_etaria_view
 
 MAIN_TABLE = "IBGE_POP"
 
 
-def import_ibge_pop(db_file="datasus.db"):
+def import_ibge_pop(db_file="datasus.db", years=["*"]):
+    """
+    Import IBGE population by age and sex per city.
+
+    Args:
+        `db_file (str)`: path to the duckdb file in which the data will be imported.
+
+        `years (list[str])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+    """
+
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],
-        "/dissemin/publicos/IBGE/POP/POPBR*.zip",
+        [
+            f"/dissemin/publicos/IBGE/POP/POPBR{utils.format_year(year)}.zip*"
+            for year in years
+        ],
         fetch_ibge_pop,
         db_file=db_file,
     )
 
-    import_auxiliar_tables()
     create_piramide_etaria_view()
 
 
