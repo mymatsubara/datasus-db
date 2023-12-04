@@ -7,13 +7,14 @@ import logging
 MAIN_TABLE = "PO_PAINEL_ONCOLOGIA"
 
 
-def import_po():
+def import_po(db_file="datasus.db"):
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],
         "/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/POBR*.dbc",
         fetch_po,
+        db_file=db_file,
     )
 
 

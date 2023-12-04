@@ -7,13 +7,14 @@ import logging
 MAIN_TABLE = "SIH_RD_SISTEMA_INFORMACOES_HOSPITALARES"
 
 
-def import_sih_rh():
+def import_sih_rh(db_file="datasus.db"):
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
         [MAIN_TABLE],
         "/dissemin/publicos/SIHSUS/200801_/Dados/RD*.dbc",
         fetch_sih_rh,
+        db_file=db_file,
     )
 
 

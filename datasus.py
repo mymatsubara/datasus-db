@@ -20,11 +20,11 @@ def import_from_ftp(
     target_tables: list[str],
     ftp_glob: str,
     fetch_fn: FetchFn,
-    db_string="datasus.db",
+    db_file="datasus.db",
     ftp_host="ftp.datasus.gov.br",
     ftp_exclude_regex: str = None,
 ):
-    with duckdb.connect(db_string) as db_con:
+    with duckdb.connect(db_file) as db_con:
         target_tables_set = set(target_tables)
         files = ftp.get_matching_files(ftp_host, ftp_glob)
         if ftp_exclude_regex:

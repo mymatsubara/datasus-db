@@ -10,11 +10,14 @@ import logging
 MAIN_TABLE = "IBGE_POP_TCU"
 
 
-def import_ibge_pop_tcu():
+def import_ibge_pop_tcu(db_file="datasus.db"):
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
-        [MAIN_TABLE], "/dissemin/publicos/IBGE/POPTCU/POPTBR*.zip", fetch_ibge_pop_tcu
+        [MAIN_TABLE],
+        "/dissemin/publicos/IBGE/POPTCU/POPTBR*.zip",
+        fetch_ibge_pop_tcu,
+        db_file,
     )
 
 

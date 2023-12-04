@@ -16,7 +16,7 @@ import datasus
 MAIN_TABLE = "SIM_DO_SISTEMA_DE_INFORMACAO_DE_MORTALIDADE"
 
 
-def import_sim_do():
+def import_sim_do(db_file="datasus.db"):
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
@@ -24,6 +24,7 @@ def import_sim_do():
         "/dissemin/publicos/SIM/CID10/DORES/DO*.dbc",
         fetch_sim_do,
         ftp_exclude_regex=r".*/DOBR.*\.dbc",
+        db_file=db_file,
     )
 
     datasus.import_from_ftp(
@@ -31,6 +32,7 @@ def import_sim_do():
         "/dissemin/publicos/SIM/PRELIM/DORES/DO*.dbc",
         fetch_sim_do,
         ftp_exclude_regex=r".*/DOBR.*\.dbc",
+        db_file=db_file,
     )
 
 

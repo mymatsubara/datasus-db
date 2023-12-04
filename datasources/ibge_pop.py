@@ -11,11 +11,14 @@ MAIN_TABLE = "IBGE_POP"
 MUNICIPIO_TABLE = "IBGE_POP_MUNICIPIO"
 
 
-def import_ibge_pop():
+def import_ibge_pop(db_file="datasus.db"):
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     datasus.import_from_ftp(
-        [MAIN_TABLE], "/dissemin/publicos/IBGE/POP/POPBR*.zip", fetch_ibge_pop
+        [MAIN_TABLE],
+        "/dissemin/publicos/IBGE/POP/POPBR*.zip",
+        fetch_ibge_pop,
+        db_file=db_file,
     )
 
     import_auxiliar_tables()

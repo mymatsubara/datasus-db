@@ -12,13 +12,14 @@ UF_TABLE = "AUX_UF"
 CID10_DOENCA_TABLE = "AUX_CID10_DOENCA"
 
 
-def import_auxiliar_tables():
+def import_auxiliar_tables(db_file="datasus.db"):
     logging.info(f"⏳ [AUX_TABLES] Starting import...")
 
     datasus.import_from_ftp(
         [CID10_DOENCA_TABLE, MUNICIPIO_TABLE, UF_TABLE],
         "/dissemin/publicos/SIM/CID10/DOCS/Docs_Tabs_CID10.zip*",
         fetch_sim_auxiliar,
+        db_file=db_file,
     )
 
 

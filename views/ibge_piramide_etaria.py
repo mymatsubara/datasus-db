@@ -28,6 +28,6 @@ from POP_PERCENTUAL;
 """
 
 
-def create_piramide_etaria_view(db_string="datasus.db"):
-    with duckdb.connect(db_string) as con:
+def create_piramide_etaria_view(db_file="datasus.db"):
+    with duckdb.connect(db_file) as con:
         con.execute(VIEW_DDL)
