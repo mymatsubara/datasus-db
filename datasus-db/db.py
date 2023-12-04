@@ -29,7 +29,7 @@ FROM {IMPORT_TABLE}
 WHERE table_name IN ({tables})
 GROUP BY file
 HAVING count = {len(target_tables)}"""
-    ).df()["file"]
+    ).pl()["file"]
     imported_files = set(imported_files)
 
     return [file for file in files if not path.basename(file) in imported_files]
@@ -42,7 +42,7 @@ def is_file_imported(
         db_con.execute(
             f"SELECT COUNT(*) as count FROM {IMPORT_TABLE} WHERE table_name = ? AND file = ?",
             [target_table, path.basename(file)],
-        ).df()["count"][0]
+        ).pl()["count"][0]
         == 1
     )
 
@@ -71,4 +71,4 @@ def has_table(table_name: str, db_con: duckdb.DuckDBPyConnection) -> bool:
     return db_con.execute(
         "SELECT count(*) == 1 as has_table FROM duckdb_tables where table_name = ?",
         [table_name],
-    ).df()["has_table"][0]
+    ).pl()["has_table"][0]

@@ -1,4 +1,0 @@
-SQLAlchemy
-dbfread
-pyarrow
-duckdb

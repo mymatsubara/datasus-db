@@ -9,7 +9,7 @@ import logging
 def main():
     logging.basicConfig(level=logging.INFO)
     # import_sim_do()
-    # import_po()
+    import_po()
     # import_ibge_pop(years=[2021, 2012])
     # import_ibge_pop_tcu(years=[2024, 23, "19", 2012])
 
