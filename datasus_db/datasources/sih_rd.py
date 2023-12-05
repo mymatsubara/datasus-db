@@ -1,9 +1,9 @@
 import polars as pl
-from pl_utils import to_schema, Column, DateColumn
-import datasus
-import utils
-import ftp
 import logging
+from ..pl_utils import to_schema, Column, DateColumn
+from ..datasus import import_from_ftp
+from ..utils import format_year, format_month
+from ..ftp import fetch_dbc_as_df
 
 MAIN_TABLE = "SIH_RD"
 
@@ -23,10 +23,10 @@ def import_sih_rd(db_file="datasus.db", years=["*"], states=["*"], months=["*"])
     """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
-    datasus.import_from_ftp(
+    import_from_ftp(
         [MAIN_TABLE],
         [
-            f"/dissemin/publicos/SIHSUS/200801_/Dados/RD{state.upper()}{utils.format_year(year)}{utils.format_month(month)}.dbc*"
+            f"/dissemin/publicos/SIHSUS/200801_/Dados/RD{state.upper()}{format_year(year)}{format_month(month)}.dbc*"
             for year in years
             for state in states
             for month in months
@@ -37,7 +37,7 @@ def import_sih_rd(db_file="datasus.db", years=["*"], states=["*"], months=["*"])
 
 
 def fetch_sih_rh(ftp_path: str):
-    df = ftp.fetch_dbc_as_df(ftp_path)
+    df = fetch_dbc_as_df(ftp_path)
     return {MAIN_TABLE: map_sih_rd(df)}
 
 

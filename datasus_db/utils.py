@@ -1,4 +1,5 @@
 import itertools
+import os
 
 
 def format_year(year, digits=2):
@@ -19,3 +20,8 @@ def format_month(month):
 
 def flatten(list_of_lists):
     return itertools.chain.from_iterable(list_of_lists)
+
+
+def rm(file: str):
+    if os.path.exists(file):
+        os.remove(file)

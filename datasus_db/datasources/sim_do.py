@@ -1,8 +1,6 @@
 import polars as pl
-import ftp
 import logging
-import utils
-from pl_utils import (
+from ..pl_utils import (
     upsert_column,
     to_schema,
     Column,
@@ -12,7 +10,9 @@ from pl_utils import (
     fill_text,
     fill_non_numeric,
 )
-import datasus
+from ..datasus import import_from_ftp
+from ..utils import format_year
+from ..ftp import fetch_dbc_as_df
 
 MAIN_TABLE = "SIM_DO"
 
@@ -29,10 +29,10 @@ def import_sim_do(db_file="datasus.db", years=["*"], states=["*"]):
         `states (list[str])`: list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`
     """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import for non preliminary data...")
-    datasus.import_from_ftp(
+    import_from_ftp(
         [MAIN_TABLE],
         [
-            f"/dissemin/publicos/SIM/CID10/DORES/DO{state.upper()}{utils.format_year(year, digits=4)}.dbc*"
+            f"/dissemin/publicos/SIM/CID10/DORES/DO{state.upper()}{format_year(year, digits=4)}.dbc*"
             for year in years
             for state in states
         ],
@@ -42,10 +42,10 @@ def import_sim_do(db_file="datasus.db", years=["*"], states=["*"]):
     )
 
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import for preliminary data...")
-    datasus.import_from_ftp(
+    import_from_ftp(
         [MAIN_TABLE],
         [
-            f"/dissemin/publicos/SIM/PRELIM/DORES/DO{state.upper()}{utils.format_year(year, digits=4)}.dbc*"
+            f"/dissemin/publicos/SIM/PRELIM/DORES/DO{state.upper()}{format_year(year, digits=4)}.dbc*"
             for year in years
             for state in states
         ],
@@ -56,7 +56,7 @@ def import_sim_do(db_file="datasus.db", years=["*"], states=["*"]):
 
 
 def fetch_sim_do(ftp_path: str):
-    df = ftp.fetch_dbc_as_df(ftp_path)
+    df = fetch_dbc_as_df(ftp_path)
     return {MAIN_TABLE: map_sim_do(df)}
 
 

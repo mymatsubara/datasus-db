@@ -2,9 +2,7 @@ import urllib.request as request
 import ftplib
 import logging
 import io
-import dbf
 from typing import Iterable
-from utils import flatten
 import subprocess
 import shutil
 import os.path as path
@@ -12,6 +10,7 @@ import os
 from zipfile import ZipFile
 from dbfread import DBF
 import polars as pl
+from .utils import rm, flatten
 
 
 def fetch_dbc_as_df(ftp_path: str) -> pl.DataFrame:
@@ -33,8 +32,8 @@ def fetch_dbc_as_df(ftp_path: str) -> pl.DataFrame:
 
     df = pl.DataFrame(iter(DBF(dbf_file, encoding="iso-8859-1")))
 
-    dbf.rm(dbc_file)
-    dbf.rm(dbf_file)
+    rm(dbc_file)
+    rm(dbf_file)
 
     return df
 

@@ -1,9 +1,9 @@
 import polars as pl
-import datasus
-import ftp
-import utils
-from pl_utils import to_schema, Column, DateColumn
 import logging
+from ..pl_utils import to_schema, Column, DateColumn
+from ..datasus import import_from_ftp
+from ..utils import format_year
+from ..ftp import fetch_dbc_as_df
 
 MAIN_TABLE = "PO"
 
@@ -20,10 +20,10 @@ def import_po(db_file="datasus.db", years=["*"]):
 
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
-    datasus.import_from_ftp(
+    import_from_ftp(
         [MAIN_TABLE],
         [
-            f"/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/POBR{utils.format_year(year, digits=4)}.dbc*"
+            f"/dissemin/publicos/PAINEL_ONCOLOGIA/DADOS/POBR{format_year(year, digits=4)}.dbc*"
             for year in years
         ],
         fetch_po,
@@ -32,7 +32,7 @@ def import_po(db_file="datasus.db", years=["*"]):
 
 
 def fetch_po(ftp_path: str):
-    df = ftp.fetch_dbc_as_df(ftp_path)
+    df = fetch_dbc_as_df(ftp_path)
     return {MAIN_TABLE: map_po(df)}
 
 

@@ -1,12 +1,11 @@
-import datasus
 import polars as pl
 import os.path as path
-from pl_utils import to_schema, Column
-from dbfread import DBF
-import dbf
-import ftp
 import logging
-import utils
+from ..pl_utils import to_schema, Column
+from ..dbf import read_as_df
+from ..datasus import import_from_ftp
+from ..utils import format_year
+from ..ftp import fetch_from_zip
 
 MAIN_TABLE = "IBGE_POP_TCU"
 
@@ -22,10 +21,10 @@ def import_ibge_pop_tcu(db_file="datasus.db", years=["*"]):
     """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
-    datasus.import_from_ftp(
+    import_from_ftp(
         [MAIN_TABLE],
         [
-            f"/dissemin/publicos/IBGE/POPTCU/POPTBR{utils.format_year(year)}.zip*"
+            f"/dissemin/publicos/IBGE/POPTCU/POPTBR{format_year(year)}.zip*"
             for year in years
         ],
         fetch_ibge_pop_tcu,
@@ -35,9 +34,9 @@ def import_ibge_pop_tcu(db_file="datasus.db", years=["*"]):
 
 def fetch_ibge_pop_tcu(ftp_path: str):
     dbf_file = path.basename(ftp_path).split(".")[0] + ".dbf"
-    files = ftp.fetch_from_zip(ftp_path, [dbf_file])
+    files = fetch_from_zip(ftp_path, [dbf_file])
 
-    df = dbf.read_as_df(dbf_file, files[dbf_file])
+    df = read_as_df(dbf_file, files[dbf_file])
 
     return {MAIN_TABLE: map_ibge_pop_tcu(df)}
 

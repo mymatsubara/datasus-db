@@ -1,7 +1,7 @@
 import io
 import re
 import polars as pl
-from pl_utils import Column, to_schema
+from .pl_utils import Column, to_schema
 
 
 def to_dataframe(cnv_bytes: bytes, id_dtype=pl.UInt32):

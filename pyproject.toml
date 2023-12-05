@@ -5,6 +5,9 @@ description = "Biblioteca para baixar e importar dados do datasus para um banco 
 authors = ["Murilo Matsubara <murilo.matsubara@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+packages = [
+    { include = "datasus_db" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"

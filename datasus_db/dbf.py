@@ -1,7 +1,7 @@
 import os.path as path
-import os
 import polars as pl
 from dbfread import DBF
+from .utils import rm
 
 
 def read_as_df(filename: str, bytes: bytes, encoding: str = None):
@@ -18,8 +18,3 @@ def read_as_df(filename: str, bytes: bytes, encoding: str = None):
         raise e
     finally:
         rm(tmp_file)
-
-
-def rm(file: str):
-    if path.exists(file):
-        os.remove(file)

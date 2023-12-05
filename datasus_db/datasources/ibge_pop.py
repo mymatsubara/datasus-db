@@ -1,12 +1,11 @@
-import datasus
 import polars as pl
 import os.path as path
-from pl_utils import to_schema, Column
-import ftp
 import logging
-import utils
-from datasources.auxiliar import import_auxiliar_tables
-from views.ibge_piramide_etaria import create_piramide_etaria_view
+from ..pl_utils import to_schema, Column
+from ..views.ibge_piramide_etaria import create_piramide_etaria_view
+from ..datasus import import_from_ftp
+from ..utils import format_year
+from ..ftp import fetch_from_zip
 
 MAIN_TABLE = "IBGE_POP"
 
@@ -23,10 +22,10 @@ def import_ibge_pop(db_file="datasus.db", years=["*"]):
 
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
-    datasus.import_from_ftp(
+    import_from_ftp(
         [MAIN_TABLE],
         [
-            f"/dissemin/publicos/IBGE/POP/POPBR{utils.format_year(year)}.zip*"
+            f"/dissemin/publicos/IBGE/POP/POPBR{format_year(year)}.zip*"
             for year in years
         ],
         fetch_ibge_pop,
@@ -38,7 +37,7 @@ def import_ibge_pop(db_file="datasus.db", years=["*"]):
 
 def fetch_ibge_pop(ftp_path: str):
     csv_file = path.basename(ftp_path).split(".")[0] + ".csv"
-    files = ftp.fetch_from_zip(ftp_path, [csv_file])
+    files = fetch_from_zip(ftp_path, [csv_file])
     df = pl.read_csv(
         files[csv_file],
         schema={

@@ -1,8 +1,6 @@
 from typing import Callable
-import ftp
 import os.path as path
 import duckdb
-import db
 import multiprocessing
 import polars as pl
 import time
@@ -10,6 +8,14 @@ import random
 import re
 import logging
 from typing import Iterable
+from .ftp import get_matching_files
+from .db import (
+    create_import_table,
+    check_new_files,
+    import_dataframe,
+    is_file_imported,
+    mark_file_as_imported,
+)
 
 
 MapFn = Callable[[pl.DataFrame], pl.DataFrame]
@@ -26,12 +32,12 @@ def import_from_ftp(
 ):
     with duckdb.connect(db_file) as db_con:
         target_tables_set = set(target_tables)
-        files = ftp.get_matching_files(ftp_host, ftp_globs)
+        files = get_matching_files(ftp_host, ftp_globs)
         if ftp_exclude_regex:
             files = remove_matching(files, ftp_exclude_regex)
 
-        db.create_import_table(db_con)
-        new_files = db.check_new_files(files, target_tables, db_con)
+        create_import_table(db_con)
+        new_files = check_new_files(files, target_tables, db_con)
         new_filepaths = [f"ftp://{ftp_host}{file}" for file in new_files]
 
         # Shuffle files to import in random order to reduce the chance of importing multiple large files at the same time
@@ -77,7 +83,7 @@ def import_from_ftp(
                                         )
                                         continue
 
-                                    if db.is_file_imported(filename, table, db_con):
+                                    if is_file_imported(filename, table, db_con):
                                         msg = f"🗃️ [{table}] File '{filename}' already imported"
                                         logging.info(msg)
                                         continue
@@ -131,11 +137,11 @@ def import_table_data(
     row_count = df.select(pl.count())[0, 0]
 
     if row_count != 0:
-        db.import_dataframe(target_table, df, db_con)
+        import_dataframe(target_table, df, db_con)
     else:
         logging.warning(f"⚠️ [{target_table}] '{filename}' has no data")
 
-    db.mark_file_as_imported(filepath, target_table, db_con)
+    mark_file_as_imported(filepath, target_table, db_con)
 
 
 def remove_matching(list: list[str], regex: str):

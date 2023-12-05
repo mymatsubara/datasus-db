@@ -1,10 +1,10 @@
-import datasus
-import dbf
 import logging
 import polars as pl
-from pl_utils import fill_empty, Column, to_schema, rename_columns
-import ftp
-import cnv
+from ..pl_utils import fill_empty, Column, to_schema
+from ..ftp import fetch_from_zip
+from ..cnv import to_dataframe
+from ..datasus import import_from_ftp
+from ..dbf import read_as_df
 
 
 MUNICIPIO_TABLE = "AUX_MUNICIPIO"
@@ -21,7 +21,7 @@ def import_auxiliar_tables(db_file="datasus.db"):
     """
     logging.info(f"⏳ [AUX_TABLES] Starting import...")
 
-    datasus.import_from_ftp(
+    import_from_ftp(
         [CID10_DOENCA_TABLE, MUNICIPIO_TABLE, UF_TABLE],
         ["/dissemin/publicos/SIM/CID10/DOCS/Docs_Tabs_CID10.zip*"],
         fetch_sim_auxiliar,
@@ -33,13 +33,11 @@ def fetch_sim_auxiliar(ftp_path: str):
     cid10_file = "TABELAS/CID10.DBF"
     municipio_file = "TABELAS/CADMUN.DBF"
     uf_file = "TABELAS/TABUF.DBF"
-    files = ftp.fetch_from_zip(ftp_path, [cid10_file, municipio_file, uf_file])
+    files = fetch_from_zip(ftp_path, [cid10_file, municipio_file, uf_file])
 
-    cid10_df = dbf.read_as_df(cid10_file, files[cid10_file], encoding="cp850")
-    municipio_df = dbf.read_as_df(
-        municipio_file, files[municipio_file], encoding="cp850"
-    )
-    uf_df = dbf.read_as_df(uf_file, files[uf_file], encoding="cp850")
+    cid10_df = read_as_df(cid10_file, files[cid10_file], encoding="cp850")
+    municipio_df = read_as_df(municipio_file, files[municipio_file], encoding="cp850")
+    uf_df = read_as_df(uf_file, files[uf_file], encoding="cp850")
 
     return {
         CID10_DOENCA_TABLE: map_cid10(cid10_df),
@@ -117,11 +115,11 @@ def fetch_painel_oncologia_auxiliar(ftp_path: str):
     municipio_file = "CNV/br_municip.cnv"
     uf_file = "CNV/br_uf.cnv"
 
-    files = ftp.fetch_from_zip(ftp_path, [municipio_file, uf_file])
+    files = fetch_from_zip(ftp_path, [municipio_file, uf_file])
 
     def read_as_df(file_name: str, id_dtype: pl.UInt32):
         cnv_bytes = files[file_name]
-        df = cnv.to_dataframe(cnv_bytes, id_dtype=id_dtype)
+        df = to_dataframe(cnv_bytes, id_dtype=id_dtype)
         return df.with_columns(
             pl.col("NOME").str.split(" ").list.slice(1).list.join(" ")
         )
