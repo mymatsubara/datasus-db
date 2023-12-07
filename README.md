@@ -1,6 +1,7 @@
 # datasus-db
 
-[![PyPI version](https://badge.fury.io/py/datasus-db.svg)](https://pypi.org/project/datasus-db/)
+[![PyPI version](https://badge.fury.io/py/datasus-db.svg)](https://pypi.org/project/datasus-db/ "Go to project PyPi page")
+[![Documentation](https://img.shields.io/badge/Documentation-3fba11)](https://mymatsubara.github.io/datasus-db/datasus_db.html "Go to project documentation")
 
 A python package to **download and import** public available data from **DATASUS's** ftp servers into a [DuckDB](https://duckdb.org/) database.
 
@@ -48,6 +49,11 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+## Documentation
+Check out the project's documentation:
+
+[![View documentation](https://img.shields.io/badge/VIEW-DOCUMENTATION-3fba11?style=for-the-badge)](https://mymatsubara.github.io/datasus-db/datasus_db.html "Go to project documentation")
 
 ## Found a bug or want a new feature?
 Feel free to create an [issue](https://github.com/mymatsubara/datasus-dbc-py/issues/new) here if you found a bug or if you want a new feature!
