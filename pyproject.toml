@@ -1,13 +1,19 @@
 [tool.poetry]
 name = "datasus-db"
 version = "0.1.0"
-description = "Biblioteca para baixar e importar dados do datasus para um banco de dados duckdb local"
+description = "Download and import DATASUS's public data to a DuckDB database"
 authors = ["Murilo Matsubara <murilo.matsubara@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+keywords = ["datasus", "duckdb", "data science", "database"]
 packages = [
     { include = "datasus_db" }
 ]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+repository = "https://github.com/mymatsubara/datasus-db"
 
 [tool.poetry.dependencies]
 python = "^3.11"
