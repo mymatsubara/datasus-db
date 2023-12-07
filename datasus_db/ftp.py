@@ -3,13 +3,12 @@ import ftplib
 import logging
 import io
 from typing import Iterable
-import subprocess
-import shutil
 import os.path as path
 import os
 from zipfile import ZipFile
 from dbfread import DBF
 import polars as pl
+import datasus_dbc
 from .utils import rm, flatten
 
 
@@ -54,15 +53,7 @@ def try_nlst(pattern: str, ftp: ftplib.FTP):
 
 
 def dbc_2_dbf(dbc: str, dbf: str):
-    cwd = path.dirname(__file__)
-    cmd = (
-        path.join(cwd, "dbc2dbf", "dbc2dbf.exe").replace("\\", r"/")
-        + " "
-        + dbc.replace("/", r"\\")
-    )
-    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).wait()
-    generated_dbf = path.join(cwd, path.basename(dbc.replace(".dbc", ".dbf")))
-    shutil.move(generated_dbf, dbf)
+    datasus_dbc.decompress(dbc, dbf)
 
 
 def fetch_from_zip(ftp_path: str, files: list[str]):
