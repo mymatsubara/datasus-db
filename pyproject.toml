@@ -14,6 +14,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 repository = "https://github.com/mymatsubara/datasus-db"
+documentation = "https://mymatsubara.github.io/datasus-db/datasus_db.html"
 
 [tool.poetry.dependencies]
 python = "^3.11"
