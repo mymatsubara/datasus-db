@@ -1,5 +1,7 @@
 # datasus-db
 
+[![PyPI version](https://badge.fury.io/py/datasus-db.svg)](https://pypi.org/project/datasus-db/)
+
 A python package to **download and import** public available data from **DATASUS's** ftp servers into a [DuckDB](https://duckdb.org/) database.
 
 ## Why DuckDB?
@@ -27,7 +29,7 @@ def main():
     datasus_db.import_sim_do()
 
     # Import SIH RD (Sistema de Informações Hospitalares do SUS - AIH Reduzida) data
-    # If you want you can import to another duckdb file changing the `db_file` argument
+    # If you want, you can import to another duckdb file changing the `db_file` argument
     datasus_db.import_sih_rd(db_file="other-name.db")
 
     # Import PO (Painel de Oncologia) data
