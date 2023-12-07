@@ -1,3 +1,7 @@
+"""
+Module with common functions used to interact with DuckDB
+"""
+
 import duckdb
 import os.path as path
 import polars as pl

@@ -1,3 +1,7 @@
+"""
+Module with helper functions to work with polars dataframes.
+"""
+
 import polars as pl
 from dataclasses import dataclass
 

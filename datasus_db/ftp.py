@@ -1,3 +1,7 @@
+"""
+Module with helper functions to interact with DATASUS ftp server
+"""
+
 import urllib.request as request
 import ftplib
 import logging
@@ -27,7 +31,7 @@ def fetch_dbc_as_df(ftp_path: str) -> pl.DataFrame:
     ) as f:
         f.write(dbc_raw)
 
-    dbc_2_dbf(dbc_file, dbf_file)
+    datasus_dbc.decompress(dbc_file, dbf_file)
 
     df = pl.DataFrame(iter(DBF(dbf_file, encoding="iso-8859-1")))
 
@@ -50,10 +54,6 @@ def try_nlst(pattern: str, ftp: ftplib.FTP):
         logging.warn(f"⚠️  Could not found file matching: {pattern}")
 
     return files
-
-
-def dbc_2_dbf(dbc: str, dbf: str):
-    datasus_dbc.decompress(dbc, dbf)
 
 
 def fetch_from_zip(ftp_path: str, files: list[str]):

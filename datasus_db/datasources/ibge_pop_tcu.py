@@ -11,13 +11,17 @@ MAIN_TABLE = "IBGE_POP_TCU"
 
 
 def import_ibge_pop_tcu(db_file="datasus.db", years=["*"]):
-    """
-    Import population estimated per city by TCU (Tribunal de Contas da União).
+    """Import population estimated per city by TCU (Tribunal de Contas da União).
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported to.
+        db_file (str, optional): path to the duckdb file in which the data will be imported to. Defaults to "datasus.db".
+        years (list, optional): list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`. Defaults to ["*"].
 
-        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+    ---
+
+    Extra:
+    - **Data description**: https://github.com/mymatsubara/datasus-db/blob/main/docs/ibge_pop_tcu.pdf
+    - **ftp path**: ftp.datasus.gov.br/dissemin/publicos/IBGE/POPTCU/POPTBR*.zip
     """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 

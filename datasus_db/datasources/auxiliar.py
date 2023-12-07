@@ -13,11 +13,16 @@ CID10_DOENCA_TABLE = "AUX_CID10_DOENCA"
 
 
 def import_auxiliar_tables(db_file="datasus.db"):
-    """
-    Import auxiliar tables with some datasus codes definitions (eg: municipios, doenças, ...)
+    """Import auxiliar tables with some datasus codes definitions (eg: municipios, doenças, ...)
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported to.
+        db_file (str, optional): path to the duckdb file in which the data will be imported to.
+
+    ---
+
+    Extra:
+    - **Municipio data description**: https://github.com/mymatsubara/datasus-db/blob/main/docs/auxiliar/municipio.pdf
+    - **ftp path**: ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DOCS/Docs_Tabs_CID10.zip
     """
     logging.info(f"⏳ [AUX_TABLES] Starting import...")
 

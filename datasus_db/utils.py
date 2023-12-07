@@ -1,3 +1,5 @@
+"""Module with generic helper functions"""
+
 import itertools
 import os
 

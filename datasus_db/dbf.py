@@ -1,3 +1,6 @@
+"""
+Module with helper functions to handler with *.dbf files
+"""
 import os.path as path
 import polars as pl
 from dbfread import DBF

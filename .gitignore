@@ -4,4 +4,4 @@ __pycache__
 *.parquet
 .venv
 dist
-
+docs/pdoc

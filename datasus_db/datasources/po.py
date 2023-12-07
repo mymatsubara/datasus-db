@@ -9,15 +9,18 @@ MAIN_TABLE = "PO"
 
 
 def import_po(db_file="datasus.db", years=["*"]):
-    """
-    Import PO (Painel de Oncologia) data (since 2013).
+    """Import PO (Painel de Oncologia) data (since 2013).
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported to.
+        db_file (str, optional): path to the duckdb file in which the data will be imported to. Defaults to "datasus.db".
+        years (list, optional): list of years for which data will be imported (if available). Eg: `[2013, 2020]` Defaults to ["*"].
 
-        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2013, 2020]`
+    ---
+
+    Extra:
+    - **Data description**: https://github.com/mymatsubara/datasus-db/blob/main/docs/po.pdf
+    - **ftp path**: ftp.datasus.gov.br/dissemin/publicos/IBGE/POP/POPBR*.zip
     """
-
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     import_from_ftp(

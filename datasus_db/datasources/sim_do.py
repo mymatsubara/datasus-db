@@ -18,15 +18,19 @@ MAIN_TABLE = "SIM_DO"
 
 
 def import_sim_do(db_file="datasus.db", years=["*"], states=["*"]):
-    """
-    Import DO (Declaração de Óbito) from SIM (Sistema de informações de Mortalidade).
+    """Import DO (Declaração de Óbito) from SIM (Sistema de informações de Mortalidade).
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported to.
+        db_file (str, optional): path to the duckdb file in which the data will be imported to. Defaults to "datasus.db".
+        years (list, optional): list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`. Defaults to ["*"].
+        states (list, optional): list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`. Defaults to ["*"].
 
-        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+    ---
 
-        `states (list[str])`: list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`
+    Extra:
+    - **Data description**: https://github.com/mymatsubara/datasus-db/blob/main/docs/sim_do.pdf
+    - **ftp path non preliminary data**: ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/DO*.dbc
+    - **ftp path preliminary data**: ftp.datasus.gov.br/dissemin/publicos/SIM/PRELIM/DORES/DO*.dbc
     """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import for non preliminary data...")
     import_from_ftp(

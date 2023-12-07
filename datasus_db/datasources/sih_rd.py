@@ -9,17 +9,19 @@ MAIN_TABLE = "SIH_RD"
 
 
 def import_sih_rd(db_file="datasus.db", years=["*"], states=["*"], months=["*"]):
-    """
-    Import RD (Autorização de Internação Hospitalar Reduzida) from SIMSUS (Sistema de Informações Hospitalares do SUS).
+    """Import RD (Autorização de Internação Hospitalar Reduzida) from SIMSUS (Sistema de Informações Hospitalares do SUS).
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported to.
+        db_file (str, optional): path to the duckdb file in which the data will be imported to. Defaults to "datasus.db".
+        years (list, optional): list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`. Defaults to ["*"].
+        states (list, optional): list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`. Defaults to ["*"].
+        months (list, optional): list of months numbers (1-12) for which data will be imported (if available). Eg: `[1, 12, 6]`. Defaults to ["*"].
 
-        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+    ---
 
-        `states (list[str])`: list of brazilian 2 letters state for which data will be imported (if available). Eg: `["SP", "RJ"]`
-
-        `months (list[int])`: list of months numbers (1-12) for which data will be imported (if available). Eg: `[1, 12, 6]`
+    Extra:
+    - **Data description**: https://github.com/mymatsubara/datasus-db/blob/main/docs/sih_rd.pdf
+    - **ftp path**: ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/RD*.dbc
     """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 

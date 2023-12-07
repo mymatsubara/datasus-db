@@ -1,3 +1,7 @@
+"""
+Module with functions used to batch multiple imports from DATASUS's ftp server in parallel 
+"""
+
 from typing import Callable
 import os.path as path
 import duckdb

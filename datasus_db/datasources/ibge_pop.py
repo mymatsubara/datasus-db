@@ -17,6 +17,12 @@ def import_ibge_pop(db_file="datasus.db", years=["*"]):
     Args:
         db_file (str, optional): path to the duckdb file in which the data will be imported to. Defaults to "datasus.db".
         years (list, optional): list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]. Defaults to ["*"].
+
+    ---
+
+    Extra:
+    - **Data description**: https://github.com/mymatsubara/datasus-db/blob/main/docs/ibge_pop.pdf
+    - **ftp path**: ftp.datasus.gov.br/dissemin/publicos/IBGE/POP/POPBR*.zip
     """
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 

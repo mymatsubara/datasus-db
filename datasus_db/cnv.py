@@ -1,3 +1,7 @@
+"""
+Module with functions to deal with DATASUS convetion files (*.cnv), which are usually file which maps ids to a readable names.
+"""
+
 import io
 import re
 import polars as pl
