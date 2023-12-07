@@ -11,15 +11,13 @@ MAIN_TABLE = "IBGE_POP"
 
 
 def import_ibge_pop(db_file="datasus.db", years=["*"]):
-    """
-    Import IBGE population by age and sex per city.
+    """Import IBGE population by age and sex per city.
+    https://google.com
 
     Args:
-        `db_file (str)`: path to the duckdb file in which the data will be imported to.
-
-        `years (list[int])`: list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]`
+        db_file (str, optional): path to the duckdb file in which the data will be imported to. Defaults to "datasus.db".
+        years (list, optional): list of years for which data will be imported (if available). Eg: `[2012, 2000, 2010]. Defaults to ["*"].
     """
-
     logging.info(f"⏳ [{MAIN_TABLE}] Starting import...")
 
     import_from_ftp(
