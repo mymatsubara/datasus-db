@@ -29,12 +29,17 @@ def main():
     # By default the data is imported to the file `datasus.db`
     datasus_db.import_sim_do()
 
-    # Import SIH RD (Sistema de Informações Hospitalares do SUS - AIH Reduzida) data
-    # If you want, you can import to another duckdb file changing the `db_file` argument
-    datasus_db.import_sih_rd(db_file="other-name.db")
-
     # Import PO (Painel de Oncologia) data
-    datasus_db.import_po()
+    datasus_db.import_po(db_file="other-name.db")
+
+    # Import SIH RD (Sistema de Informações Hospitalares do SUS - AIH Reduzida) data
+    datasus_db.import_sih_rd()
+
+    # Import SP (Autorização de Internação Hospitalar Saúde do Profissional) from SIHSUS (Sistema de Informações Hospitalares do SUS).
+    datasus_db.import_sih_sp()
+
+    # Import PA (Produção Ambulatorial) from SIASUS (Sistema de Informações Ambulatorial do SUS).
+    datasus_db.import_sia_pa()
 
     # Import IBGE POP (População IBGE - Agregada por município, sexo e faixa etaria) data
     datasus_db.import_ibge_pop()
