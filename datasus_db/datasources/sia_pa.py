@@ -113,6 +113,5 @@ def map_sia_pa(df: pl.DataFrame):
             Column("PA_SRV_C", pl.Utf8),
             Column("PA_INE", pl.Utf8),
             Column("PA_NAT_JUR", pl.Utf8),
-
         ],
     )

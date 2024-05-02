@@ -21,6 +21,7 @@ If `datasus_db` is missing a datasource that you need, feel free to create an is
 """
 
 from .datasources.sih_rd import import_sih_rd
+from .datasources.sih_sp import import_sih_sp
 from .datasources.sim_do import import_sim_do
 from .datasources.sia_pa import import_sia_pa
 from .datasources.po import import_po
