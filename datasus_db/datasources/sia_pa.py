@@ -27,7 +27,7 @@ def import_sia_pa(db_file="datasus.db", years=["*"], states=["*"], months=["*"])
     import_from_ftp(
         [MAIN_TABLE],
         [
-            f"/dissemin/publicos/SIASUS/200801_/Dados/PA{state.upper()}{format_year(year)}{format_month(month)}.dbc*"
+            f"/dissemin/publicos/SIASUS/200801_/Dados/PA{state.upper()}{format_year(year)}{format_month(month)}*.dbc"
             for year in years
             for state in states
             for month in months
@@ -113,6 +113,5 @@ def map_sia_pa(df: pl.DataFrame):
             Column("PA_SRV_C", pl.Utf8),
             Column("PA_INE", pl.Utf8),
             Column("PA_NAT_JUR", pl.Utf8),
-
         ],
     )
