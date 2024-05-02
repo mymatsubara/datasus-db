@@ -7,7 +7,9 @@ A python package to **download and import** public available data from **DATASUS
 # Import functions
 Bellow is the list of all **import functions**:
 - `datasus_db.datasources.sih_rd.import_sih_rd`
+- `datasus_db.datasources.sih_sp.import_sih_sp`
 - `datasus_db.datasources.sim_do.import_sim_do`
+- `datasus_db.datasources.sia_pa.import_sia_pa`
 - `datasus_db.datasources.po.import_po`
 - `datasus_db.datasources.ibge_pop.import_ibge_pop`
 - `datasus_db.datasources.ibge_pop_tcu.import_ibge_pop_tcu`
