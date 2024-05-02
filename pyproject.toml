@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datasus-db"
-version = "0.1.1"
+version = "0.1.2"
 description = "Download and import DATASUS's public data to a DuckDB database"
 authors = ["Murilo Matsubara <murilo.matsubara@gmail.com>"]
 license = "MIT"
